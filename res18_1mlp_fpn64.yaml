@@ -1,0 +1,48 @@
+MODEL:
+  TYPE: generalized_rcnn
+  CONV_BODY: FPN.add_fpn_ResNet18_conv5_body
+  NUM_CLASSES: 2
+  FASTER_RCNN: True
+NUM_GPUS: 1
+SOLVER:
+  WEIGHT_DECAY: 0.0001
+  LR_POLICY: steps_with_decay
+  BASE_LR: 0.001
+  GAMMA: 0.1
+  MAX_ITER: 200000
+  STEPS: [0, 80000, 160000]
+FPN:
+  FPN_ON: True
+  DIM: 64
+  RPN_ANCHOR_START_SIZE: 16
+  ROI_MAX_LEVEL: 5
+  ROI_MIN_LEVEL: 2
+  RPN_MAX_LEVEL: 6
+  RPN_MIN_LEVEL: 2
+  MULTILEVEL_ROIS: True
+  MULTILEVEL_RPN: True
+FAST_RCNN:
+  ROI_BOX_HEAD: fast_rcnn_heads.add_roi_1mlp_head
+  ROI_XFORM_METHOD: RoIAlign
+  ROI_XFORM_RESOLUTION: 7
+  ROI_XFORM_SAMPLING_RATIO: 2
+TRAIN:
+#  WEIGHTS: /home/long/github/detectron/detectron-output/fish_1mlp_fpn128_512/train/fisher_train_221:fisher_val_221/generalized_rcnn/model_final.pkl
+  #WEIGHTS: /home/long/github/detectron/models/detectron/e2e_faster_rcnn_R-50-FPN_2x.pkl
+#  WEIGHTS: /home/long/github/detectron/models/detectron/ImageNetPretrained/R-18.pkl
+  #https://s3-us-west-2.amazonaws.com/detectron/ImageNetPretrained/MSRA/R-50.pkl
+  WEIGHTS: /media/E/models/detectron/res18_1mlp_fpn64_512.pkl
+  DATASETS: ('fisher_train_221','fisher_val_221','fisher_valtt_221')
+  SCALES: (320,)
+  MAX_SIZE: 1333
+  BATCH_SIZE_PER_IM: 256
+  RPN_PRE_NMS_TOP_N: 2000  # Per FPN level
+TEST:
+  DATASETS: ('fisher_valtt_221',)
+  FORCE_JSON_DATASET_EVAL: True
+  SCALES: (320,)
+  MAX_SIZE: 1333
+  NMS: 0.5
+  RPN_PRE_NMS_TOP_N: 1000  # Per FPN level
+  RPN_POST_NMS_TOP_N: 20
+OUTPUT_DIR: .
